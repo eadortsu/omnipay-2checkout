@@ -2,7 +2,6 @@
 
 namespace Omnipay\TwoCheckoutPlus\Message;
 
-use Guzzle\Http\Exception\BadResponseException;
 
 /**
  * Purchase Request.
@@ -40,6 +39,11 @@ class DetailSaleRequest extends AbstractRequest
     {
         return !is_null($value);
     }
+	
+	public function getHttpMethod()
+	{
+		return 'GET';
+	}
 
     public function getData()
     {
@@ -87,18 +91,24 @@ class DetailSaleRequest extends AbstractRequest
         if (!empty($payload['sale_id'])) {
             $query = '?sale_id=' . $payload['sale_id'];
         }
-
-        try {
-            $response = $this->httpClient->get(
-                $this->getEndpoint() . $query,
-                $this->getRequestHeaders()
-            )->setAuth($data['admin_username'], $data['admin_password'])->send();
-
-            return new DetailSaleResponse($this, $response->json());
-        } catch (BadResponseException $e) {
-            $response = $e->getResponse();
-
-            return new DetailSaleResponse($this, $response->json());
-        }
+	
+		$headers = $this->getRequestHeaders();
+        if (
+        	(isset($data['admin_username']) && !empty($data['admin_username'])) &&
+			(isset($data['admin_password']) && !empty($data['admin_password']))
+		) {
+			$headers['Authorization'] = 'Basic ' . base64_encode($data['admin_username'] . ':' . $data['admin_password']);
+		}
+		$endpoint = $this->getEndpoint() . $query;
+	
+		$httpResponse = $this->httpClient->request(
+			$this->getHttpMethod(),
+			$endpoint,
+			$headers
+		);
+	
+		$data = json_decode($httpResponse->getBody()->getContents(), true);
+	
+		return new DetailSaleResponse($this, $data);
     }
 }

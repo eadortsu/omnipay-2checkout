@@ -51,9 +51,10 @@ class PurchaseResponse extends AbstractResponse implements RedirectResponseInter
         $endpoint = $this->getEndPoint();
 
         // remove the sandbox parameter.
-        unset($this->data['sandbox']);
+		$data = $this->data;
+        unset($data['sandbox']);
 
-        $url = $endpoint.'?'.http_build_query($this->data);
+        $url = $endpoint.'?'.http_build_query($data);
 
         // Fix for some sites that encode the entities
         return str_replace('&amp;', '&', $url);

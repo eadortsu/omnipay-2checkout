@@ -1,9 +1,10 @@
 {
-    "name": "collizo4sky/omnipay-2checkout",
+    "name": "bedigit/omnipay-2checkout",
     "description": "2Checkout driver for the Omnipay payment processing library",
     "keywords": [
         "omnipay",
-        "2checkout"
+        "2checkout",
+        "larapen"
     ],
     "homepage": "https://github.com/collizo4sky/omnipay-2checkout",
     "license": "MIT",
@@ -15,7 +16,7 @@
         }
     ],
     "require": {
-        "omnipay/common": "~2.0"
+        "omnipay/common": "^3@beta"
     },
     "require-dev": {
         "omnipay/tests": "~2.0",
@@ -33,10 +34,5 @@
     },
     "scripts": {
         "test": "phpunit"
-    },
-    "extra": {
-        "branch-alias": {
-            "dev-master": "1.0-dev"
-        }
     }
 }

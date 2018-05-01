@@ -2,7 +2,6 @@
 
 namespace Omnipay\TwoCheckoutPlus\Message;
 
-use Guzzle\Http\Exception\BadResponseException;
 
 /**
  * Purchase Request.
@@ -40,6 +39,11 @@ class RefundRequest extends AbstractRequest
     {
         return !is_null($value);
     }
+	
+	public function getHttpMethod()
+	{
+		return 'POST';
+	}
 
     public function getData()
     {
@@ -98,19 +102,24 @@ class RefundRequest extends AbstractRequest
         $payload = $data;
         unset($payload['admin_username']);
         unset($payload['admin_password']);
-
-        try {
-            $response = $this->httpClient->post(
-                $this->getEndpoint(),
-                $this->getRequestHeaders(),
-                $payload
-            )->setAuth($data['admin_username'], $data['admin_password'])->send();
-
-            return new RefundResponse($this, $response->json());
-        } catch (BadResponseException $e) {
-            $response = $e->getResponse();
-
-            return new RefundResponse($this, $response->json());
-        }
+	
+		$headers = $this->getRequestHeaders();
+		if (
+			(isset($data['admin_username']) && !empty($data['admin_username'])) &&
+			(isset($data['admin_password']) && !empty($data['admin_password']))
+		) {
+			$headers['Authorization'] = 'Basic ' . base64_encode($data['admin_username'] . ':' . $data['admin_password']);
+		}
+	
+		$httpResponse = $this->httpClient->request(
+			$this->getHttpMethod(),
+			$this->getEndpoint(),
+			$headers,
+			$payload
+		);
+	
+		$data = json_decode($httpResponse->getBody()->getContents(), true);
+	
+		return new RefundResponse($this, $data);
     }
 }

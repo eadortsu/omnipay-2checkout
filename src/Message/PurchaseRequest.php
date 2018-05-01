@@ -14,6 +14,7 @@ class PurchaseRequest extends AbstractRequest
         $this->validate('accountNumber', 'returnUrl');
 
         $data = array();
+		$data['sandbox'] = false;
         $data['sid'] = $this->getAccountNumber();
         $data['mode'] = '2CO';
         $data['merchant_order_id'] = $this->getTransactionId();
