@@ -1,5 +1,5 @@
 {
-    "name": "collizo4sky/omnipay-2checkout",
+    "name": "eadorstu/omnipay-2checkout",
     "description": "2Checkout driver for the Omnipay payment processing library",
     "keywords": [
         "omnipay",
